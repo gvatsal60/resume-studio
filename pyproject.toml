@@ -6,5 +6,5 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "rendercv[full]>=2.8",
-    "rust-just>=1.55.0",
+    "rust-just>=1.55.1",
 ]
