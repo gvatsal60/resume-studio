@@ -42,7 +42,7 @@ repos:
       - id: python-use-type-annotations
   # Runs mypy to check Python type annotations.
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v2.1.0"
+    rev: "v2.3.0"
     hooks:
       - id: mypy
   # ShellCheck hook for linting shell scripts
