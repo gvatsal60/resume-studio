@@ -14,9 +14,8 @@ RUN pip install --no-cache-dir \
   python-dateutil \
   just \
   uv && \
-  playwright install chromium && \
-  playwright install-deps chromium \
+  python -m playwright install chromium && \
+  python -m playwright install-deps chromium && \
   sudo apt-get autoremove -y && \
   sudo apt-get clean -y && \
-  sudo rm -rf /var/lib/apt/lists/* \
-  rm -rf /tmp/*
+  sudo rm -rf /var/lib/apt/lists/* /tmp/*
