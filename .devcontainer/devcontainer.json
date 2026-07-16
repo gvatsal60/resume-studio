@@ -1,4 +1,7 @@
 {
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "capAdd": [
     "SYS_PTRACE"
   ],
@@ -16,6 +19,7 @@
         "analytic-signal.preview-pdf",
         "astral-sh.ty",
         "charliermarsh.ruff",
+        "kilocode.kilo-code",
         "ms-azuretools.vscode-containers",
         "ms-python.python",
         "redhat.vscode-yaml",
@@ -56,7 +60,6 @@
       }
     }
   },
-  "image": "mcr.microsoft.com/devcontainers/python",
   "postCreateCommand": "chmod +x ${containerWorkspaceFolder}/.devcontainer/postCreateScript.sh && ${containerWorkspaceFolder}/.devcontainer/postCreateScript.sh",
   "runArgs": [
     "--rm",

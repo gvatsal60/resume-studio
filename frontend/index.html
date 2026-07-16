@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Studio</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='2' y='2' width='12' height='9' rx='1.5' fill='none' stroke='%236366f1' stroke-width='1.3'/%3E%3Cpath d='M5 13.5h6' stroke='%236366f1' stroke-width='1.3' stroke-linecap='round'/%3E%3Cpath d='M8 10.5v3' stroke='%236366f1' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-pill">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:14px;height:14px;display:block;flex:0 0 auto">
+            <rect x="2" y="2" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M5 13.5h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M8 10.5v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          <strong>Resume Studio</strong>
+        </div>
+      </div>
+      <div class="topbar-controls">
+        <div class="pill">
+          <span>Format</span>
+          <div class="format-toolbar format-toolbar--global">
+            <button class="fmt-btn" type="button" title="Bold" data-action="bold">B</button>
+            <button class="fmt-btn" type="button" title="Italic" data-action="italic">I</button>
+          </div>
+        </div>
+        <label class="pill">
+          <span>Theme</span>
+          <select id="theme-select"></select>
+        </label>
+        <label class="pill">
+          <span>Accent</span>
+          <input type="color" id="accent-color" value="#4f46e5" />
+        </label>
+        <label class="toggle">
+          <input type="checkbox" id="autopreview" checked />
+          <span>Auto Preview</span>
+        </label>
+        <button id="preview-btn" class="btn soft" type="button">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:14px;height:14px;display:block">
+            <path d="M13.5 7.5A6 6 0 1 1 7.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M11 1.5v4.5h4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Update Preview
+        </button>
+        <button id="download-btn" class="btn soft" type="button">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:14px;height:14px;display:block">
+            <path d="M8 2v8.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M4.5 7.5L8 11l3.5-3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 13.5h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          Download PDF
+        </button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="editor" id="editor" aria-label="Resume form">
+        <!-- form rendered by app.js -->
+      </section>
+
+      <section class="preview-pane">
+        <div class="preview-frame">
+          <iframe id="preview" title="Resume preview"></iframe>
+          <div id="preview-empty" class="preview-empty">
+            <div class="spinner"></div>
+            <p>Generating preview…</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
