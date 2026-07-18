@@ -11,12 +11,7 @@ cv:
       username: gvatsal60
   sections:
     summary:
-      - Software Engineer specializing in DevOps/SRE with **5** years of
-        experience building scalable infrastructure. Leverages **Python**,
-        **C/C++**, **Docker**, **Kubernetes**, **Ansible**, **Jenkins** and
-        **Github** to drive CI/CD automation, system reliability, and deployment
-        consistency.
-
+      - Software Engineer specializing in DevOps/SRE with **5** years of experience building scalable infrastructure. Leverages **Python**, **C/C++**, **Docker**, **Kubernetes**, **Ansible**, **Jenkins** and **Github** to drive CI/CD automation, system reliability, and deployment consistency.
     skills:
       - label: Cloud & Infrastructure
         details: AWS, Azure, GCP, Kubernetes, Docker, Ansible, Terraform
@@ -30,7 +25,6 @@ cv:
         details: Linux, Networking, Distributed Systems, Microservices
       - label: GenAI/Platform Engineering
         details: RAG pipelines, LLM APIs, Model Serving, Vector Databases
-
     experience:
       - company: Capgemini IT India Pvt. Ltd.
         position: Consultant
@@ -48,22 +42,15 @@ cv:
         highlights:
           - Streamlined Jenkins & Docker CI/CD workflows, driving a 30% reduction in deployment times across multiple environments.
           - Standardized containerized environments using DevContainers, Python, and Bash to eliminate configuration drift across engineering teams.
-
     projects:
-      - name: "[SonarLint DevContainer
-          Feature](https://containers.dev/features?search=gvatsal60)"
-        summary: Containerized VSCode DevContainer feature integrating SonarLint for
-          automated static code analysis.
+      - name: "[SonarLint DevContainer Feature](https://containers.dev/features?search=gvatsal60)"
+        summary: Containerized VSCode DevContainer feature integrating SonarLint for automated static code analysis.
         highlights:
-          - Achieved **24K+** downloads, standardizing DevContainer-based
-            workflows across teams.
-
+          - Achieved **24K+** downloads, standardizing DevContainer-based workflows across teams.
       - name: "[LogMask AI](https://github.com/gvatsal60/logmask-ai)"
-        summary: AI-powered PII detection and log anonymization system for secure
-          enterprise log processing.
+        summary: AI-powered PII detection and log anonymization system for secure enterprise log processing.
         highlights:
           - Developed automated PII anonymization pipelines using Microsoft Presidio and spaCy for secure enterprise log processing.
-
     education:
       - institution: Meerut Institute of Engineering and Technology
         area: Information Technology
@@ -77,6 +64,5 @@ cv:
           #   Cloud Computing"
     certifications:
       - bullet: "[AWS Cloud Practitioner](https://www.credly.com/users/gvatsal60)"
-      - bullet: "[Google Associate Cloud
-          Engineer](https://www.credly.com/users/gvatsal60)"
+      - bullet: "[Google Associate Cloud Engineer](https://www.credly.com/users/gvatsal60)"
       - bullet: "[Microsoft Azure Fundamentals](https://www.credly.com/users/gvatsal60)"

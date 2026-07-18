@@ -12,7 +12,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TEST_PORT = 8011
-LOG_FILE = ROOT / "tests" / "server.log"
+LOG_FILE = ROOT / 'tests' / 'server.log'
 
 BASE_URL = f"http://127.0.0.1:{TEST_PORT}"
 
@@ -31,15 +31,15 @@ def _wait_for_port_free(port: int, timeout: float = 5.0) -> None:
     raise RuntimeError(f"Port {port} is already in use by another process.")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope='session')
 def base_url():
     _wait_for_port_free(TEST_PORT)
     LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
-    log = LOG_FILE.open("w", encoding="utf-8")
+    log = LOG_FILE.open('w', encoding='utf-8')
     proc = subprocess.Popen(
         [
-            "uv", "run", "uvicorn", "backend.main:app",
-            "--host", "127.0.0.1", f"--port={TEST_PORT}",
+            'uv', 'run', 'uvicorn', 'backend.main:app',
+            '--host', '127.0.0.1', f"--port={TEST_PORT}",
         ],
         cwd=str(ROOT),
         stdout=log,
@@ -58,7 +58,7 @@ def base_url():
             time.sleep(0.5)
     if not ready:
         proc.terminate()
-        raise RuntimeError("Test server failed to start; see tests/server.log")
+        raise RuntimeError('Test server failed to start; see tests/server.log')
 
     yield BASE_URL
 
@@ -69,16 +69,16 @@ def base_url():
         proc.kill()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope='session')
 def browser():
     with sync_playwright() as p:
         browser = p.chromium.launch(
             args=[
-                "--no-sandbox",
-                "--disable-gpu",
-                "--disable-dev-shm-usage",
-                "--disable-software-rasterizer",
-                "--disable-extensions",
+                '--no-sandbox',
+                '--disable-gpu',
+                '--disable-dev-shm-usage',
+                '--disable-software-rasterizer',
+                '--disable-extensions',
             ]
         )
         yield browser
