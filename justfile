@@ -14,10 +14,13 @@ sync:
     @uv sync --no-cache
 
 watch:
-    @uv run rendercv watch \
+    @uv run rendercv render --watch \
       --design {{design}} \
       --locale-catalog {{locale}} \
       --settings {{settings}} \
+      --dont-generate-markdown \
+      --dont-generate-html \
+      --dont-generate-png \
       {{resume}}
 
 build:
@@ -25,8 +28,11 @@ build:
       --design {{design}} \
       --locale-catalog {{locale}} \
       --settings {{settings}} \
+      --dont-generate-markdown \
+      --dont-generate-html \
+      --dont-generate-png \
       {{resume}}
 
 clean:
     @uv clean
-    @rm -rf __pycache__ .pytest_cache .mypy_cache .venv
+    @rm -rf __pycache__ .pytest_cache .mypy_cache .venv rendercv_output

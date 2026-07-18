@@ -1,6 +1,13 @@
 # RenderCV Local
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/gvatsal60/rendercv-local/master.svg)](https://results.pre-commit.ci/latest/github/gvatsal60/rendercv-local/HEAD)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/412f34a844b148dfa277c16b2bec6316)](https://app.codacy.com/gh/gvatsal60/rendercv-local/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![CodeFactor](https://www.codefactor.io/repository/github/gvatsal60/rendercv-local/badge)](https://www.codefactor.io/repository/github/gvatsal60/rendercv-local)
+![GitHub pull-requests](https://img.shields.io/github/issues-pr/gvatsal60/rendercv-local)
+![GitHub Issues](https://img.shields.io/github/issues/gvatsal60/rendercv-local)
+![GitHub forks](https://img.shields.io/github/forks/gvatsal60/rendercv-local)
+![GitHub stars](https://img.shields.io/github/stars/gvatsal60/rendercv-local)
 
 Generate professional, beautifully formatted CVs from **YAML** configuration files. Version control your resume, iterate with live preview, export to PDF and Markdown.
 
