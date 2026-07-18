@@ -12,7 +12,7 @@ USER vscode
 RUN pip install --no-cache-dir \
   playwright \
   python-dateutil \
-  just \
+  rust-just \
   uv && \
   python -m playwright install chromium && \
   python -m playwright install-deps chromium && \
