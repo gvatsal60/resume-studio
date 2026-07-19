@@ -1,6 +1,6 @@
 SECTION_CARDS = ".card:has(button[title='Move down'])"
 TITLE_INPUT = "input[placeholder='Section title']"
-AUTOPREVIEW_CHECKBOX = "#autopreview"
+AUTOPREVIEW_CHECKBOX = '#autopreview'
 SECTION_TITLES_SCRIPT = "() => Array.from(document.querySelectorAll('input[placeholder=\"Section title\"]')).map(el => el.value)"
 THEME_SELECT = '#theme-select'
 EDITOR_SELECT = '#editor'
