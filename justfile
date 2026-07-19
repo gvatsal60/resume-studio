@@ -33,6 +33,15 @@ build:
       --dont-generate-png \
       {{resume}}
 
+web-debug:
+    @uv run uvicorn backend.main:app --reload --port 8001
+
+web:
+    @uv run uvicorn backend.main:app --port 50000
+
+test:
+    @uv run pytest tests
+
 clean:
     @uv clean
     @rm -rf __pycache__ .pytest_cache .mypy_cache .venv rendercv_output

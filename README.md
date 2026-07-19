@@ -42,6 +42,24 @@ just --list    # See all commands
 
 Output: **PDF** + **Markdown** files in current directory
 
+## 🌐 Web App
+
+A no-login web UI to fill in your résumé and download a polished PDF (powered by RenderCV).
+
+```bash
+uv sync                       # install deps (fastapi + rendercv)
+uv run uvicorn backend.main:app --reload --port 8000
+```
+
+Open <http://127.0.0.1:8000>. The form pre-fills from `src/*.yaml`. Pick a theme,
+page size, and accent color, then **Update preview** to see the live PDF and
+**Download PDF** to save it. No account required.
+
+- `GET  /api/defaults` — starter `cv` / `design` / `locale` / `settings`
+- `GET  /api/themes`  — available RenderCV themes
+- `POST /api/preview` — returns a PDF for inline preview
+- `POST /api/render`  — returns a PDF as a download
+
 ## 📁 File Structure
 
 ```text

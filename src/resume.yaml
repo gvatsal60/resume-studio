@@ -1,1 +1,68 @@
 # resume.yaml
+cv:
+  name: "**Vatsal Gupta**"
+  location: Gurgaon, India
+  email: xyz@gmail.com
+  phone: +91 9999999999
+  social_networks:
+    - network: LinkedIn
+      username: gvatsal60
+    - network: GitHub
+      username: gvatsal60
+  sections:
+    summary:
+      - Software Engineer specializing in DevOps/SRE with **5** years of experience building scalable infrastructure. Leverages **Python**, **C/C++**, **Docker**, **Kubernetes**, **Ansible**, **Jenkins** and **Github** to drive CI/CD automation, system reliability, and deployment consistency.
+    skills:
+      - label: Cloud & Infrastructure
+        details: AWS, Azure, GCP, Kubernetes, Docker, Ansible, Terraform
+      - label: DevOps & CI/CD
+        details: Jenkins, GitHub Actions, Argo CD, Helm, GitOps
+      - label: Programming
+        details: Python, Bash, C/C++, Rust
+      - label: Observability
+        details: Prometheus, Grafana, Logging, Alerting
+      - label: Systems & Architecture
+        details: Linux, Networking, Distributed Systems, Microservices
+      - label: GenAI/Platform Engineering
+        details: RAG pipelines, LLM APIs, Model Serving, Vector Databases
+    experience:
+      - company: Capgemini IT India Pvt. Ltd.
+        position: Consultant
+        start_date: 2025-12
+        end_date: present
+        location: Gurugram, India
+        highlights:
+          - Architected CI/CD pipelines using Docker, Jenkins, Kubernetes, and Ansible, cutting build-to-deployment cycle time by 70%.
+          - Automated telecom & cloud infrastructure (KVM, virsh, K8s) to enable rapid, standardized environment setups for 4G/5G RAN systems.
+      - company: Tata Consultancy Services
+        position: System Engineer
+        location: Noida, India
+        start_date: 2021-08
+        end_date: 2025-12
+        highlights:
+          - Streamlined Jenkins & Docker CI/CD workflows, driving a 30% reduction in deployment times across multiple environments.
+          - Standardized containerized environments using DevContainers, Python, and Bash to eliminate configuration drift across engineering teams.
+    projects:
+      - name: "[SonarLint DevContainer Feature](https://containers.dev/features?search=gvatsal60)"
+        summary: Containerized VSCode DevContainer feature integrating SonarLint for automated static code analysis.
+        highlights:
+          - Achieved **24K+** downloads, standardizing DevContainer-based workflows across teams.
+      - name: "[LogMask AI](https://github.com/gvatsal60/logmask-ai)"
+        summary: AI-powered PII detection and log anonymization system for secure enterprise log processing.
+        highlights:
+          - Developed automated PII anonymization pipelines using Microsoft Presidio and spaCy for secure enterprise log processing.
+    education:
+      - institution: Meerut Institute of Engineering and Technology
+        area: Information Technology
+        degree: Bachelor of Technology (B.Tech)
+        start_date: 2017-06
+        end_date: 2021-07
+        location: Meerut, India
+        highlights:
+          - "Percentage: 78%"
+          # - "Relevant Coursework: Operating Systems, Computer Networks, DBMS,
+          #   Cloud Computing"
+    certifications:
+      - bullet: "[AWS Cloud Practitioner](https://www.credly.com/users/gvatsal60)"
+      - bullet: "[Google Associate Cloud Engineer](https://www.credly.com/users/gvatsal60)"
+      - bullet: "[Microsoft Azure Fundamentals](https://www.credly.com/users/gvatsal60)"
