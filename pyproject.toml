@@ -23,6 +23,7 @@ testpaths = ["tests"]
 addopts = "-ra"
 
 [tool.bandit]
+exclude = ["uv.lock"]
 exclude_dirs = ["tests", "*/tests/*"]
 skips = ["B101"]
 
