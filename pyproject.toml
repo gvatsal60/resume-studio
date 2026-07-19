@@ -23,8 +23,7 @@ testpaths = ["tests"]
 addopts = "-ra"
 
 [tool.bandit]
-exclude = ["uv.lock"]
-exclude_dirs = ["tests", "*/tests/*"]
+exclude_dirs = ["tests", "*_test.py", "uv.lock"]
 skips = ["B101"]
 
 [tool.fastapi]
