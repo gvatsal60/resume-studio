@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import pathlib
 
-from tests.constants import (
+from tests.test_constants import (
     AUTOPREVIEW_CHECKBOX,
     BOLD_BUTTON,
     CLEAR_STORAGE_SCRIPT,
+    DEFAULT_NAME,
     EDITOR_SELECT,
     EMAIL_INPUT,
     NAME_INPUT,
@@ -233,7 +234,7 @@ def test_empty_form_persists_after_refresh(page, base_url):
     page.wait_for_selector(EDITOR_SELECT)
     page.reload()
     _wait_preview(page)
-    assert page.locator(NAME_INPUT).input_value() == '**Vatsal Gupta**'
+    assert page.locator(NAME_INPUT).input_value() == DEFAULT_NAME
     assert page.locator(EMAIL_INPUT).input_value() == 'xyz@gmail.com'
 
 
@@ -302,7 +303,7 @@ def test_corrupted_localstorage_falls_back_to_defaults(page, base_url):
     page.evaluate("() => localStorage.setItem('rendercv_state', 'not-json')")
     page.reload()
     _wait_preview(page)
-    assert page.locator(NAME_INPUT).input_value() == '**Vatsal Gupta**'
+    assert page.locator(NAME_INPUT).input_value() == DEFAULT_NAME
 
 
 def test_autopreview_toggle_persists(page, base_url):
@@ -330,7 +331,7 @@ def test_partial_state_merges_with_defaults(page, base_url):
     page.goto(base_url)
     _wait_preview(page)
     assert page.locator(THEME_SELECT).input_value() == 'moderncv'
-    assert page.locator(NAME_INPUT).input_value() == '**Vatsal Gupta**'
+    assert page.locator(NAME_INPUT).input_value() == DEFAULT_NAME
     assert page.locator(EMAIL_INPUT).input_value() == 'xyz@gmail.com'
 
 
@@ -357,7 +358,7 @@ def test_corrupted_design_state_falls_back_to_defaults(page, base_url):
     page.goto(base_url)
     _wait_preview(page)
     assert page.locator(THEME_SELECT).input_value() == 'engineeringresumes'
-    assert page.locator(NAME_INPUT).input_value() == '**Vatsal Gupta**'
+    assert page.locator(NAME_INPUT).input_value() == DEFAULT_NAME
 
 
 def test_long_text_persists_after_refresh(page, base_url):
