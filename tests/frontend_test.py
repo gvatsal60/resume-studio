@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pathlib
 
-from tests.test_constants import (
+from tests.constants_test import (
     AUTOPREVIEW_CHECKBOX,
     BOLD_BUTTON,
     CLEAR_STORAGE_SCRIPT,
