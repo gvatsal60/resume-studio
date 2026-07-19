@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import logging
 import pathlib
 
 import fastapi
+from fastapi import status
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 
 from backend import rendercv_service
@@ -33,25 +35,26 @@ async def api_render(request: fastapi.Request) -> fastapi.responses.Response:
         data = await request.json()
     except Exception:
         return JSONResponse(
-            status_code=422,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={'detail': 'Invalid JSON body', 'errors': ['Request body must be valid JSON.']},
         )
     if not isinstance(data, dict):
         return JSONResponse(
-            status_code=422,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={'detail': 'Invalid payload', 'errors': ['Request body must be a JSON object.']},
         )
     try:
         pdf_bytes = rendercv_service.render_cv(data)
     except rendercv_service.RenderError as exc:
         return JSONResponse(
-            status_code=422,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={'detail': 'Validation failed', 'errors': exc.errors},
         )
     except Exception as exc:
+        logging.exception('Render failed')
         return JSONResponse(
-            status_code=422,
-            content={'detail': 'Render failed', 'errors': [str(exc)]},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={'detail': 'Render failed', 'errors': ['An unexpected error occurred.']},
         )
 
     name = (data.get('cv') or {}).get('name') or 'Resume'
@@ -72,25 +75,26 @@ async def api_preview(request: fastapi.Request) -> fastapi.responses.Response:
         data = await request.json()
     except Exception:
         return JSONResponse(
-            status_code=422,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={'detail': 'Invalid JSON body', 'errors': ['Request body must be valid JSON.']},
         )
     if not isinstance(data, dict):
         return JSONResponse(
-            status_code=422,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={'detail': 'Invalid payload', 'errors': ['Request body must be a JSON object.']},
         )
     try:
         pdf_bytes = rendercv_service.render_cv(data)
     except rendercv_service.RenderError as exc:
         return JSONResponse(
-            status_code=422,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={'detail': 'Validation failed', 'errors': exc.errors},
         )
     except Exception as exc:
+        logging.exception('Preview render failed')
         return JSONResponse(
-            status_code=422,
-            content={'detail': 'Render failed', 'errors': [str(exc)]},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={'detail': 'Render failed', 'errors': ['An unexpected error occurred.']},
         )
     return fastapi.responses.Response(
         content=pdf_bytes,
@@ -102,8 +106,16 @@ async def api_preview(request: fastapi.Request) -> fastapi.responses.Response:
 @app.get('/{full_path:path}')
 async def serve_frontend(full_path: str) -> fastapi.responses.Response:
     """Serve the single-page frontend and its static assets."""
-    requested = FRONTEND_DIR / full_path
-    if full_path and requested.is_file():
+    normalized_path = pathlib.PurePosixPath(full_path)
+    if normalized_path.is_absolute() or '..' in normalized_path.parts:
+        index = FRONTEND_DIR / 'index.html'
+        return HTMLResponse(index.read_text(encoding='utf-8'))
+    requested = (FRONTEND_DIR / pathlib.Path(*normalized_path.parts)).resolve()
+    if (
+        full_path
+        and requested.is_file()
+        and (requested == FRONTEND_DIR or FRONTEND_DIR in requested.parents)
+    ):
         return FileResponse(requested)
 
     index = FRONTEND_DIR / 'index.html'
