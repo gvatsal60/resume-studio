@@ -22,5 +22,8 @@ dev = [
 testpaths = ["tests"]
 addopts = "-ra"
 
+[tool.bandit]
+exclude = ["tests"]
+
 [tool.fastapi]
 entrypoint = "backend.main:app"
