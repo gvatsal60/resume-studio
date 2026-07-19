@@ -111,7 +111,7 @@ Python 3.13 • RenderCV • PDF Preview • Ty • Python Extension • YAML Su
 
 This project is built on top of **[RenderCV](https://github.com/sinaatalay/rendercv)**, created by **Sina Atalay**.
 
-RenderCV is released under the **[MIT License](https://github.com/sinaatalay/rendercv/blob/main/LICENSE)**.  
+RenderCV is released under the **[MIT License](https://github.com/sinaatalay/rendercv/blob/main/LICENSE)**.
 Copyright (c) 2023 to present Sina Atalay and individual contributors.
 
 We are grateful for the excellent tooling and themes RenderCV provides.
