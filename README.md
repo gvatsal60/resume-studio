@@ -1,4 +1,4 @@
-# RenderCV Local
+# Résumé Studio
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/gvatsal60/rendercv-local/master.svg)](https://results.pre-commit.ci/latest/github/gvatsal60/rendercv-local/HEAD)

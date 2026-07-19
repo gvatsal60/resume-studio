@@ -24,7 +24,11 @@ function el(tag, attrs = {}, ...children) {
   return node;
 }
 
-const uid = () => Math.random().toString(36).slice(2, 9);
+const uid = () => {
+  const arr = new Uint8Array(6);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map((b) => b.toString(16).padStart(2, "0")).join("");
+};
 
 function label(text) {
   return el("label", { class: "lbl" }, text);

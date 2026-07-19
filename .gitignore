@@ -94,6 +94,7 @@ logs/
 
 # Jest testing framework
 coverage/
+.coverage
 
 # TypeScript
 *.tsbuildinfo

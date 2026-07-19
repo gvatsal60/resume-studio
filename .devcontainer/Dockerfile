@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/python:latest
+FROM mcr.microsoft.com/devcontainers/python:3.13
 
 ENV ANONYMIZED_TELEMETRY=false \
   DEBIAN_FRONTEND=noninteractive \

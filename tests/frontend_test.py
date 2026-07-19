@@ -361,6 +361,24 @@ def test_corrupted_design_state_falls_back_to_defaults(page, base_url):
     assert page.locator(NAME_INPUT).input_value() == DEFAULT_NAME
 
 
+def test_toast_is_output_element_not_div_with_role(page, base_url):
+    page.goto(base_url)
+    page.wait_for_selector('#toast')
+    tag = page.locator('#toast').evaluate('el => el.tagName')
+    assert tag.lower() == 'output'
+    assert page.locator('#toast[role="status"]').count() == 0
+
+
+def test_uid_uses_crypto_getrandomvalues(page, base_url):
+    page.goto(base_url)
+    page.wait_for_selector(EDITOR_SELECT)
+    uses_crypto = page.evaluate("""() => {
+      const src = typeof uid === 'function' ? uid.toString() : '';
+      return src.includes('crypto.getRandomValues');
+    }""")
+    assert uses_crypto is True
+
+
 def test_long_text_persists_after_refresh(page, base_url):
     page.goto(base_url)
     page.evaluate(CLEAR_STORAGE_SCRIPT)
