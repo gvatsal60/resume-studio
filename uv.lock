@@ -752,7 +752,6 @@ dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "python-multipart" },
     { name = "rendercv", extra = ["full"] },
-    { name = "uvicorn", extra = ["standard"] },
 ]
 
 [package.dev-dependencies]
@@ -768,7 +767,6 @@ requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115" },
     { name = "python-multipart", specifier = ">=0.0.20" },
     { name = "rendercv", extras = ["full"], specifier = ">=2.8" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.34" },
 ]
 
 [package.metadata.requires-dev]

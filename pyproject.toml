@@ -7,7 +7,6 @@ requires-python = ">=3.13"
 dependencies = [
     "rendercv[full]>=2.8",
     "fastapi[standard]>=0.115",
-    "uvicorn[standard]>=0.34",
     "python-multipart>=0.0.20",
 ]
 
@@ -22,3 +21,6 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+
+[tool.fastapi]
+entrypoint = "backend.main:app"

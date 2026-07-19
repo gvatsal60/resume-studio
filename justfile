@@ -33,11 +33,11 @@ build:
       --dont-generate-png \
       {{resume}}
 
-web-debug:
-    @uv run uvicorn backend.main:app --reload --port 8001
-
 web:
-    @uv run uvicorn backend.main:app --port 50000
+    @uv run fastapi dev
+
+deploy:
+    @uv run fastapi deploy
 
 test:
     @uv run pytest tests
