@@ -106,7 +106,11 @@ async def api_preview(request: fastapi.Request) -> fastapi.responses.Response:
 @app.get('/{full_path:path}')
 async def serve_frontend(full_path: str) -> fastapi.responses.Response:
     """Serve the single-page frontend and its static assets."""
-    requested = (FRONTEND_DIR / full_path).resolve()
+    normalized_path = pathlib.PurePosixPath(full_path)
+    if normalized_path.is_absolute() or '..' in normalized_path.parts:
+        index = FRONTEND_DIR / 'index.html'
+        return HTMLResponse(index.read_text(encoding='utf-8'))
+    requested = (FRONTEND_DIR / pathlib.Path(*normalized_path.parts)).resolve()
     if (
         full_path
         and requested.is_file()

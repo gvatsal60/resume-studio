@@ -95,6 +95,8 @@ def render_cv(data: dict) -> bytes:
                 main_yaml_file=_to_yaml(merged),
                 input_file_path=workdir / 'resume.yaml',
             )
+            typst_path = generate_typst(model)
+            pdf_path = generate_pdf(model, typst_path)
         except RenderCVUserValidationError as exc:
             messages = []
             for e in exc.validation_errors:
@@ -103,9 +105,9 @@ def render_cv(data: dict) -> bytes:
                     loc = '.'.join(str(p) for p in loc)
                 messages.append(f"{loc}: {getattr(e, 'message', '') or ''}")
             raise RenderError(messages or [str(exc)])
+        except Exception as exc:
+            raise RenderError([str(exc)]) from exc
 
-        typst_path = generate_typst(model)
-        pdf_path = generate_pdf(model, typst_path)
         if pdf_path is None or not pdf_path.exists():
             raise RenderError(['PDF generation failed unexpectedly.'])
         return pdf_path.read_bytes()
