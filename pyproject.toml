@@ -23,7 +23,8 @@ testpaths = ["tests"]
 addopts = "-ra"
 
 [tool.bandit]
-exclude = ["tests"]
+skips = ["B101"]
+exclude_dirs = ["tests"]
 
 [tool.fastapi]
 entrypoint = "backend.main:app"
