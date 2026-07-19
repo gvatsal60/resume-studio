@@ -1,0 +1,25 @@
+name: Tests
+on:
+  push:
+    branches: [master]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990
+        with:
+          enable-cache: true
+      - run: |
+          uv sync --no-cache
+          uv run playwright install --with-deps chromium
+          uv run pytest tests -v
+      - if: failure()
+        run: |
+          if [ -f tests/server.log ]; then
+            echo "===== SERVER LOG ====="
+            cat tests/server.log
+          fi

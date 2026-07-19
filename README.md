@@ -9,7 +9,7 @@
 ![GitHub forks](https://img.shields.io/github/forks/gvatsal60/rendercv-local)
 ![GitHub stars](https://img.shields.io/github/stars/gvatsal60/rendercv-local)
 
-Generate professional, beautifully formatted CVs from **YAML** configuration files. Version control your resume, iterate with live preview, export to PDF and Markdown.
+Generate professional, beautifully formatted CVs from **YAML** configuration files. Version control your resume, iterate with live preview, and export to PDF.
 
 ## ⚡ Quick Start
 
@@ -28,28 +28,61 @@ code .
 ```bash
 git clone https://github.com/gvatsal60/rendercv-local.git
 cd rendercv-local
-pip install -e .
+uv sync
 ```
 
 ## 🚀 Build Commands
 
 ```bash
 just           # Clean, sync, and build
-just build     # Render your CV
+just build     # Render your CV (PDF only)
 just watch     # Live preview (auto-reload on save)
+just web       # Start the web UI
 just --list    # See all commands
 ```
 
-Output: **PDF** + **Markdown** files in current directory
+Output: **PDF** in `rendercv_output/`
+
+## 🌐 Web App
+
+A no-login web UI to fill in your résumé and download a polished PDF (powered by RenderCV).
+
+```bash
+just web       # Start the web UI (FastAPI dev server)
+```
+
+Open <http://127.0.0.1:8000>. The form pre-fills from `src/*.yaml`. Pick a theme
+and accent color, then **Update preview** to see the live PDF and
+**Download PDF** to save it. No account required.
+
+- `GET  /api/defaults` — starter `cv` / `design` / `locale` / `settings`
+- `GET  /api/themes`  — available RenderCV themes
+- `POST /api/preview` — returns a PDF for inline preview
+- `POST /api/render`  — returns a PDF as a download
 
 ## 📁 File Structure
 
 ```text
-src/
-├── resume.yaml    # Your CV content
-├── design.yaml    # Colors, fonts, margins, theme
-├── locale.yaml    # Language & date formatting
-└── settings.yaml  # App configuration
+.
+├── backend/
+│   ├── main.py            # FastAPI app & API routes
+│   └── rendercv_service.py # RenderCV rendering logic
+├── frontend/
+│   ├── index.html
+│   ├── app.js
+│   └── styles.css
+├── src/
+│   ├── resume.yaml        # Your CV content
+│   ├── design.yaml        # Colors, fonts, margins, theme
+│   ├── locale.yaml        # Language & date formatting
+│   └── settings.yaml      # App configuration
+├── tests/
+│   ├── api_test.py
+│   ├── frontend_test.py
+│   └── conftest.py
+├── justfile               # Command runner recipes
+├── pyproject.toml
+└── README.md
 ```
 
 ## ✨ Features
@@ -57,13 +90,13 @@ src/
 - 📝 **YAML-based** - Easy to edit and version control
 - 🎨 **Customizable themes** - Multiple professional designs
 - 👀 **Live preview** - See changes as you type (`just watch`)
-- 📄 **Multi-format export** - PDF + Markdown
+- 📄 **PDF export** - Polished output via RenderCV
 - 🌍 **Localization** - Support for multiple languages
 - 🐳 **Dev Container** - Pre-configured environment with all extensions
 
 ## 🔧 Dev Container Includes
 
-Python 3.13 • RenderCV • PDF Preview • Python Extension • YAML Support • Ruff Linter • Spell Checker • Error Lens
+Python 3.13 • RenderCV • PDF Preview • Ty • Python Extension • YAML Support • Ruff Linter • Spell Checker • Error Lens
 
 ## 📚 Configuration
 
@@ -74,9 +107,18 @@ Python 3.13 • RenderCV • PDF Preview • Python Extension • YAML Support �
 
 👉 [Full RenderCV docs](https://sinaatalay.github.io/rendercv/)
 
+## 🙏 Special Thanks
+
+This project is built on top of **[RenderCV](https://github.com/sinaatalay/rendercv)**, created by **Sina Atalay**.
+
+RenderCV is released under the **[MIT License](https://github.com/sinaatalay/rendercv/blob/main/LICENSE)**.
+Copyright (c) 2023 to present Sina Atalay and individual contributors.
+
+We are grateful for the excellent tooling and themes RenderCV provides.
+
 ## 🤝 Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+Open an issue or pull request on GitHub.
 
 ## 📄 License
 

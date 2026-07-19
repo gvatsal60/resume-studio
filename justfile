@@ -33,6 +33,15 @@ build:
       --dont-generate-png \
       {{resume}}
 
+web:
+    @uv run fastapi dev
+
+deploy:
+    @uv run fastapi deploy
+
+test:
+    @uv run pytest tests
+
 clean:
     @uv clean
     @rm -rf __pycache__ .pytest_cache .mypy_cache .venv rendercv_output
