@@ -1,4 +1,5 @@
 """End-to-end UI tests driving a real browser via Playwright."""
+# codeql[python/assert-used]
 
 from __future__ import annotations
 

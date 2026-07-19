@@ -1,4 +1,5 @@
 """Backend API tests (no browser required)."""
+# codeql[python/assert-used]
 
 from __future__ import annotations
 
