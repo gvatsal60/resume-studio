@@ -22,5 +22,9 @@ dev = [
 testpaths = ["tests"]
 addopts = "-ra"
 
+[tool.bandit]
+exclude_dirs = ["tests", "*_test.py", "uv.lock"]
+skips = ["B101"]
+
 [tool.fastapi]
 entrypoint = "backend.main:app"

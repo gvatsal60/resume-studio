@@ -216,7 +216,7 @@ function entriesToData(type, entries) {
 
 let previewTimer = null;
 function schedulePreview() {
-  if (!$("#autopreview").checked) return;
+  if (!$(AUTOPREVIEW_CHECKBOX).checked) return;
   clearTimeout(previewTimer);
   previewTimer = setTimeout(updatePreview, 700);
 }
@@ -285,7 +285,7 @@ function showToast(msg, isError = false) {
 /* ----------------------------------------------------------- form rendering */
 
 function renderAll() {
-  const editor = $("#editor");
+  const editor = $(EDITOR_SELECT);
   editor.innerHTML = "";
   editor.appendChild(renderBasics());
   editor.appendChild(renderSocial());
@@ -658,7 +658,7 @@ async function init() {
       mergeState(saved);
     }
 
-    const themeSel = $("#theme-select");
+    const themeSel = $(THEME_SELECT);
     (themes.themes || []).forEach((t) => {
       themeSel.appendChild(el("option", { value: t }, themeDisplayName(t)));
     });
@@ -669,7 +669,7 @@ async function init() {
     }
     themeSel.value = state.design.theme;
     $("#accent-color").value = toHex(state.design.accent);
-    $("#autopreview").checked = state.ui.autopreview !== false;
+    $(AUTOPREVIEW_CHECKBOX).checked = state.ui.autopreview !== false;
 
     themeSel.addEventListener("change", (e) => {
       state.design.theme = e.target.value;
@@ -681,7 +681,7 @@ async function init() {
       schedulePreview();
       saveState();
     });
-    $("#autopreview").addEventListener("change", (e) => {
+    $(AUTOPREVIEW_CHECKBOX).addEventListener("change", (e) => {
       state.ui.autopreview = e.target.checked;
       saveState();
     });
@@ -693,7 +693,7 @@ async function init() {
       downloadPdf();
       saveState();
     });
-    document.querySelector(".format-toolbar--global [data-action='bold']").addEventListener("click", () => {
+    document.querySelector(BOLD_BUTTON).addEventListener("click", () => {
       formatActiveField("**", "**");
       saveState();
     });
@@ -701,7 +701,7 @@ async function init() {
       formatActiveField("*", "*");
       saveState();
     });
-    $("#editor").addEventListener("focusin", (e) => {
+    $(EDITOR_SELECT).addEventListener("focusin", (e) => {
       if (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT") setActiveField(e.target);
     });
 

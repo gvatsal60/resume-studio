@@ -14,6 +14,7 @@ from backend import rendercv_service
 app = fastapi.FastAPI(title='Resume Builder', version='1.0.0')
 
 FRONTEND_DIR = pathlib.Path(__file__).resolve().parent.parent / 'frontend'
+RENDER_FAILED = 'Render failed'
 
 
 @app.get('/api/defaults')
@@ -51,10 +52,10 @@ async def api_render(request: fastapi.Request) -> fastapi.responses.Response:
             content={'detail': 'Validation failed', 'errors': exc.errors},
         )
     except Exception as exc:
-        logging.exception('Render failed')
+        logging.exception(RENDER_FAILED)
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={'detail': 'Render failed', 'errors': ['An unexpected error occurred.']},
+            content={'detail': RENDER_FAILED, 'errors': ['An unexpected error occurred.']},
         )
 
     name = (data.get('cv') or {}).get('name') or 'Resume'
@@ -94,7 +95,7 @@ async def api_preview(request: fastapi.Request) -> fastapi.responses.Response:
         logging.exception('Preview render failed')
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={'detail': 'Render failed', 'errors': ['An unexpected error occurred.']},
+            content={'detail': RENDER_FAILED, 'errors': ['An unexpected error occurred.']},
         )
     return fastapi.responses.Response(
         content=pdf_bytes,
