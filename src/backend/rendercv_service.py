@@ -13,6 +13,8 @@ from rendercv.exception import RenderCVUserValidationError
 from rendercv.renderer.pdf_png import generate_pdf
 from rendercv.renderer.typst import generate_typst
 
+CONF_DIR = pathlib.Path(__file__).resolve().parent / "conf"
+
 
 class RenderError(Exception):
     """Raised when the resume data cannot be rendered.
@@ -34,7 +36,7 @@ def _read_yaml(path: pathlib.Path) -> dict:
 
 def get_defaults() -> dict:
     """Return the starting cv/design/locale/settings used to seed the form."""
-    base = pathlib.Path(__file__).resolve().parent.parent / "src"
+    base = CONF_DIR
     defaults: dict[str, dict] = {}
     for key, filename in (
         ("cv", "resume.yaml"),

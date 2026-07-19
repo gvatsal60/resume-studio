@@ -36,12 +36,14 @@ def base_url():
     _wait_for_port_free(TEST_PORT)
     LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
     log = LOG_FILE.open("w", encoding="utf-8")
+    env = {**__import__("os").environ, "PYTHONPATH": str(ROOT / "src")}
     proc = subprocess.Popen(
         [
             "uv", "run", "uvicorn", "backend.main:app",
             "--host", "127.0.0.1", f"--port={TEST_PORT}",
         ],
         cwd=str(ROOT),
+        env=env,
         stdout=log,
         stderr=subprocess.STDOUT,
         text=True,

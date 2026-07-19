@@ -15,7 +15,4 @@ RUN pip install --no-cache-dir \
   rust-just \
   uv && \
   python -m playwright install chromium && \
-  python -m playwright install-deps chromium && \
-  sudo apt-get autoremove -y && \
-  sudo apt-get clean -y && \
-  sudo rm -rf /var/lib/apt/lists/* /tmp/*
+  python -m playwright install-deps chromium

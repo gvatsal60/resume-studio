@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+.venv/
+*.pyc
+*.pyo
+
+# Node.js
+node_modules/
+
+# Build outputs (ignored in git, but un-ignored below for deployment)
+dist/
+rendercv_output/
+
+# Include built frontend in deployment
+!dist/
+
+# Editor-specific
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+.Thumbs.db
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+tests/server.log

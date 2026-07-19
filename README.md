@@ -34,10 +34,12 @@ pip install -e .
 ## 🚀 Build Commands
 
 ```bash
-just           # Clean, sync, and build
-just build     # Render your CV
-just watch     # Live preview (auto-reload on save)
-just --list    # See all commands
+just              # Clean, sync, and build (frontend + backend)
+just build        # Render CV with frontend build
+just watch        # Live preview (auto-reload on save)
+just web          # Start production server with built frontend
+just deploy       # Deploy to FastAPI Cloud
+just --list       # See all commands
 ```
 
 Output: **PDF** + **Markdown** files in current directory
@@ -46,12 +48,15 @@ Output: **PDF** + **Markdown** files in current directory
 
 A no-login web UI to fill in your résumé and download a polished PDF (powered by RenderCV).
 
+### Local Development
+
 ```bash
 uv sync                       # install deps (fastapi + rendercv)
-uv run uvicorn backend.main:app --reload --port 8000
+cd src/frontend && npm ci     # install frontend deps
+PYTHONPATH=src uv run uvicorn backend.main:app --reload --port 8000
 ```
 
-Open <http://127.0.0.1:8000>. The form pre-fills from `src/*.yaml`. Pick a theme,
+Open <http://127.0.0.1:8000>. The form pre-fills from `src/backend/conf/*.yaml`. Pick a theme,
 page size, and accent color, then **Update preview** to see the live PDF and
 **Download PDF** to save it. No account required.
 
@@ -60,14 +65,51 @@ page size, and accent color, then **Update preview** to see the live PDF and
 - `POST /api/preview` — returns a PDF for inline preview
 - `POST /api/render`  — returns a PDF as a download
 
+### Production Deployment (FastAPI Cloud)
+
+This app is configured for deployment on [FastAPI Cloud](https://fastapicloud.com).
+
+**Prerequisites:**
+- FastAPI Cloud account
+- Repository connected to GitHub
+
+**Setup:**
+
+1. Set the **Application Directory** to `src/backend` in the FastAPI Cloud dashboard
+2. Configure environment variables:
+   ```bash
+   fastapi cloud env set APP_ENV "production"
+   fastapi cloud env set LOG_LEVEL "warning"
+   ```
+3. Add GitHub secrets for CI/CD:
+   - `FASTAPI_CLOUD_TOKEN` — your FastAPI Cloud deploy token
+   - `FASTAPI_CLOUD_APP_ID` — your app ID from FastAPI Cloud
+
+**Deploy:**
+
+```bash
+just deploy    # builds frontend and deploys to FastAPI Cloud
+```
+
+Or push to `main` — the GitHub Actions workflow will automatically build the frontend and deploy.
+
+**Frontend Build:**
+
+The frontend is built with Vite. The production build outputs to `dist/`, which is served by FastAPI in production. The `dist/` directory is git-ignored but un-ignored for deployment via `.fastapicloudignore`.
+
 ## 📁 File Structure
 
 ```text
 src/
-├── resume.yaml    # Your CV content
-├── design.yaml    # Colors, fonts, margins, theme
-├── locale.yaml    # Language & date formatting
-└── settings.yaml  # App configuration
+├── frontend/          # Web UI (HTML/CSS/JS)
+└── backend/
+    ├── main.py        # FastAPI app
+    ├── rendercv_service.py  # RenderCV integration
+    └── conf/
+        ├── resume.yaml    # Your CV content
+        ├── design.yaml    # Colors, fonts, margins, theme
+        ├── locale.yaml    # Language & date formatting
+        └── settings.yaml  # App configuration
 ```
 
 ## ✨ Features
