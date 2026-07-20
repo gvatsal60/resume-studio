@@ -20,6 +20,7 @@ from tests.constants_test import (
     TAG_NAME_SCRIPT,
     THEME_SELECT,
     TITLE_INPUT,
+    TOAST_SELECTOR,
 )
 
 
@@ -104,7 +105,7 @@ def test_validation_error_shown(page, base_url):
     page.locator(EMAIL_INPUT).fill('not-an-email')
     page.locator('#preview-btn').click()
     page.wait_for_selector('#toast.error', timeout=8000)
-    assert 'email' in page.locator('#toast').inner_text().lower()
+    assert 'email' in page.locator(TOAST_SELECTOR).inner_text().lower()
 
 
 def test_download_pdf(page, base_url, tmp_path: pathlib.Path):
@@ -364,8 +365,8 @@ def test_corrupted_design_state_falls_back_to_defaults(page, base_url):
 
 def test_toast_is_output_element_not_div_with_role(page, base_url):
     page.goto(base_url)
-    page.wait_for_selector('#toast')
-    tag = page.locator('#toast').evaluate(TAG_NAME_SCRIPT)
+    page.wait_for_selector(TOAST_SELECTOR)
+    tag = page.locator(TOAST_SELECTOR).evaluate(TAG_NAME_SCRIPT)
     assert tag.lower() == 'output'
     assert page.locator('#toast[role="status"]').count() == 0
 
