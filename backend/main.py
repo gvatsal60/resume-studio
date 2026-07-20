@@ -17,6 +17,49 @@ FRONTEND_DIR = pathlib.Path(__file__).resolve().parent.parent / 'frontend'
 RENDER_FAILED = 'Render failed'
 
 
+def _json_error(status_code: int, detail: str, errors: list[str]) -> JSONResponse:
+    return JSONResponse(
+        status_code=status_code,
+        content={'detail': detail, 'errors': errors},
+    )
+
+
+async def _parse_json_body(request: fastapi.Request) -> tuple[dict | None, JSONResponse | None]:
+    try:
+        data = await request.json()
+    except Exception:
+        return None, _json_error(
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
+            'Invalid JSON body',
+            ['Request body must be valid JSON.'],
+        )
+    if not isinstance(data, dict):
+        return None, _json_error(
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
+            'Invalid payload',
+            ['Request body must be a JSON object.'],
+        )
+    return data, None
+
+
+def _render_pdf(data: dict) -> tuple[bytes | None, JSONResponse | None]:
+    try:
+        return rendercv_service.render_cv(data), None
+    except rendercv_service.RenderError as exc:
+        return None, _json_error(
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
+            'Validation failed',
+            exc.errors,
+        )
+    except Exception:
+        logging.exception(RENDER_FAILED)
+        return None, _json_error(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            RENDER_FAILED,
+            ['An unexpected error occurred.'],
+        )
+
+
 @app.get('/api/defaults')
 def api_defaults() -> fastapi.responses.JSONResponse:
     """Return starting resume data, design, locale and settings."""
@@ -29,35 +72,23 @@ def api_themes() -> fastapi.responses.JSONResponse:
     return fastapi.responses.JSONResponse({'themes': rendercv_service.get_themes()})
 
 
+async def _render_from_request(request: fastapi.Request) -> tuple[dict, bytes] | JSONResponse:
+    data, err = await _parse_json_body(request)
+    if err:
+        return err
+    pdf_bytes, err = _render_pdf(data)
+    if err:
+        return err
+    return data, pdf_bytes
+
+
 @app.post('/api/render')
 async def api_render(request: fastapi.Request) -> fastapi.responses.Response:
     """Render resume data to a PDF and return it as a downloadable file."""
-    try:
-        data = await request.json()
-    except Exception:
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            content={'detail': 'Invalid JSON body', 'errors': ['Request body must be valid JSON.']},
-        )
-    if not isinstance(data, dict):
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            content={'detail': 'Invalid payload', 'errors': ['Request body must be a JSON object.']},
-        )
-    try:
-        pdf_bytes = rendercv_service.render_cv(data)
-    except rendercv_service.RenderError as exc:
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            content={'detail': 'Validation failed', 'errors': exc.errors},
-        )
-    except Exception as exc:
-        logging.exception(RENDER_FAILED)
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={'detail': RENDER_FAILED, 'errors': ['An unexpected error occurred.']},
-        )
-
+    result = await _render_from_request(request)
+    if isinstance(result, JSONResponse):
+        return result
+    data, pdf_bytes = result
     name = (data.get('cv') or {}).get('name') or 'Resume'
     safe_name = ''.join(c if c.isalnum() or c in ' -_' else '_' for c in name).strip()
     filename = f"{safe_name or 'Resume'}.pdf".replace(' ', '_')
@@ -72,31 +103,10 @@ async def api_render(request: fastapi.Request) -> fastapi.responses.Response:
 @app.post('/api/preview')
 async def api_preview(request: fastapi.Request) -> fastapi.responses.Response:
     """Render resume data to a PDF for inline preview (no download)."""
-    try:
-        data = await request.json()
-    except Exception:
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            content={'detail': 'Invalid JSON body', 'errors': ['Request body must be valid JSON.']},
-        )
-    if not isinstance(data, dict):
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            content={'detail': 'Invalid payload', 'errors': ['Request body must be a JSON object.']},
-        )
-    try:
-        pdf_bytes = rendercv_service.render_cv(data)
-    except rendercv_service.RenderError as exc:
-        return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            content={'detail': 'Validation failed', 'errors': exc.errors},
-        )
-    except Exception as exc:
-        logging.exception('Preview render failed')
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={'detail': RENDER_FAILED, 'errors': ['An unexpected error occurred.']},
-        )
+    result = await _render_from_request(request)
+    if isinstance(result, JSONResponse):
+        return result
+    data, pdf_bytes = result
     return fastapi.responses.Response(
         content=pdf_bytes,
         media_type='application/pdf',
