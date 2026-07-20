@@ -76,7 +76,12 @@ async def _render_from_request(request: fastapi.Request) -> tuple[dict, bytes] |
     data, err = await _parse_json_body(request)
     if err:
         return err
-    assert data is not None
+    if data is None:
+        return _json_error(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            RENDER_FAILED,
+            ['Unexpected null data.'],
+        )
     pdf_bytes, err = _render_pdf(data)
     if err:
         return err
