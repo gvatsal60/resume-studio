@@ -209,12 +209,10 @@ function entriesToData(type, entries) {
     }
     return o;
   };
-  switch (type) {
-    case "summary":
-      return entries.map((e) => e.text).filter((t) => t.trim() !== "");
-    default:
-      return entries.map((e) => clean(e)).filter((o) => Object.keys(o).length > 0);
+  if (type === "summary") {
+    return entries.map((e) => e.text).filter((t) => t.trim() !== "");
   }
+  return entries.map((e) => clean(e)).filter((o) => Object.keys(o).length > 0);
 }
 
 /* --------------------------------------------------------- preview / download */
@@ -591,7 +589,7 @@ function inferType(entries) {
 function convertEntries(type, entries) {
   if (type === "summary") {
     const first = entries[0];
-    return [{ text: typeof first === "string" ? first : (first && first.text) || "" }];
+    return [{ text: typeof first === "string" ? first : (first?.text || "") }];
   }
   return entries.map((e) => {
     const o = {};
@@ -740,7 +738,7 @@ function toHex(color) {
   if (color.startsWith("#")) return color;
   const m = color.match(/(\d+),\s*(\d+),\s*(\d+)/);
   if (m) {
-    const h = (n) => parseInt(n, 10).toString(16).padStart(2, "0");
+    const h = (n) => Number.parseInt(n, 10).toString(16).padStart(2, "0");
     return "#" + h(m[1]) + h(m[2]) + h(m[3]);
   }
   return "#4f46e5";
