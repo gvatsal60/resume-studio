@@ -36,19 +36,19 @@ async def api_render(request: fastapi.Request) -> fastapi.responses.Response:
         data = await request.json()
     except Exception:
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={'detail': 'Invalid JSON body', 'errors': ['Request body must be valid JSON.']},
         )
     if not isinstance(data, dict):
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={'detail': 'Invalid payload', 'errors': ['Request body must be a JSON object.']},
         )
     try:
         pdf_bytes = rendercv_service.render_cv(data)
     except rendercv_service.RenderError as exc:
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={'detail': 'Validation failed', 'errors': exc.errors},
         )
     except Exception as exc:
@@ -76,19 +76,19 @@ async def api_preview(request: fastapi.Request) -> fastapi.responses.Response:
         data = await request.json()
     except Exception:
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={'detail': 'Invalid JSON body', 'errors': ['Request body must be valid JSON.']},
         )
     if not isinstance(data, dict):
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={'detail': 'Invalid payload', 'errors': ['Request body must be a JSON object.']},
         )
     try:
         pdf_bytes = rendercv_service.render_cv(data)
     except rendercv_service.RenderError as exc:
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={'detail': 'Validation failed', 'errors': exc.errors},
         )
     except Exception as exc:

@@ -22,6 +22,7 @@
         "kilocode.kilo-code",
         "ms-azuretools.vscode-containers",
         "ms-python.python",
+        "ms-vscode.live-server",
         "redhat.vscode-yaml",
         "streetsidesoftware.code-spell-checker",
         "usernamehw.errorlens"

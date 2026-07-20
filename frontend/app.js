@@ -24,11 +24,19 @@ function el(tag, attrs = {}, ...children) {
   return node;
 }
 
-const uid = () => {
-  const arr = new Uint8Array(6);
-  crypto.getRandomValues(arr);
-  return Array.from(arr).map((b) => b.toString(16).padStart(2, "0")).join("");
-};
+const uid = (() => {
+  const cryptoObj =
+    (typeof window !== "undefined" && (window.crypto || window.msCrypto)) ||
+    null;
+  return () => {
+    if (cryptoObj && typeof cryptoObj.getRandomValues === "function") {
+      const buf = new Uint32Array(1);
+      cryptoObj.getRandomValues(buf);
+      return buf[0].toString(36);
+    }
+    return Math.random().toString(36).slice(2, 9);
+  };
+})();
 
 function label(text) {
   return el("label", { class: "lbl" }, text);

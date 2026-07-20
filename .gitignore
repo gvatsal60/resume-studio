@@ -95,6 +95,7 @@ logs/
 # Jest testing framework
 coverage/
 .coverage
+htmlcov/
 
 # TypeScript
 *.tsbuildinfo
@@ -118,3 +119,4 @@ bower_components/
 
 # RenderCV Output
 **/rendercv_output/
+
