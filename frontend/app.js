@@ -276,15 +276,6 @@ function parseErrors(err) {
   return err.message;
 }
 
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
 let toastTimer = null;
 function showToast(msg, isError = false) {
   const t = $("#toast");
