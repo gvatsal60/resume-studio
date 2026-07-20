@@ -406,6 +406,172 @@ def test_uid_uses_crypto_getrandomvalues(page, base_url):
     assert uses_crypto is True
 
 
+def test_el_helper_rejects_html_injection(page, base_url):
+    page.goto(base_url)
+    page.wait_for_selector(EDITOR_SELECT)
+    result = page.evaluate("""() => {
+      const el = window.el;
+      // Attempt to inject markup via a would-be 'html' attribute.
+      const node = el('div', { class: 'x', html: '<img src=x onerror=alert(1)>' }, 'safe');
+      return {
+        inner: node.innerHTML,
+        childCount: node.childNodes.length,
+        text: node.textContent,
+      };
+    }""")
+    # The 'html' attribute must be ignored: no <img> injected, only text child.
+    assert '<img' not in result['inner']
+    assert result['childCount'] == 1
+    assert result['text'] == 'safe'
+
+
+def test_toast_renders_error_text_without_html_injection(page, base_url):
+    page.goto(base_url)
+    page.wait_for_selector(EDITOR_SELECT)
+    result = page.evaluate("""() => {
+      const t = document.getElementById('toast');
+      // Simulate a validation error message containing HTML metacharacters.
+      const msg = '<script>alert(1)</script> & <b>bold</b>';
+      showToast(msg, true);
+      return {
+        inner: t.innerHTML,
+        hasScriptChild: !!t.querySelector('script'),
+        hasBChild: !!t.querySelector('b'),
+        firstText: t.textContent,
+      };
+    }""")
+    # Error text must be shown as literal text, never parsed into elements.
+    assert result['hasScriptChild'] is False
+    assert result['hasBChild'] is False
+    # textContent holds the raw string; innerHTML shows it HTML-escaped.
+    assert '<script>alert(1)</script> & <b>bold</b>' in result['firstText']
+    assert '&lt;script&gt;' in result['inner']
+
+
+# ---------------------------------------------------------------------------
+# XSS hardening suite — every DOM-write sink is exercised with both a
+# positive (escaping works) and a negative (injection attempt is blocked) case.
+# ---------------------------------------------------------------------------
+
+XSS_PAYLOADS = [
+    "<script>alert(1)</script>",
+    "<img src=x onerror=alert(1)>",
+    "<svg/onload=alert(1)>",
+    "\"><img src=x onerror=alert(1)>",
+    "javascript:alert(1)",
+    "<iframe src=javascript:alert(1)>",
+]
+
+
+def test_el_html_branch_is_removed(page, base_url):
+    """Negative: the removed 'html' attribute must not inject markup."""
+    page.goto(base_url)
+    page.wait_for_selector(EDITOR_SELECT)
+    for payload in XSS_PAYLOADS:
+        result = page.evaluate("""(p) => {
+          const el = window.el;
+          const node = el('div', { class: 'x', html: p }, 'safe');
+          return { inner: node.innerHTML, count: node.childNodes.length };
+        }""", payload)
+        assert '<img' not in result['inner']
+        assert '<script' not in result['inner']
+        assert '<svg' not in result['inner']
+        assert '<iframe' not in result['inner']
+        assert result['count'] == 1  # only the text child
+
+
+def test_el_rejects_inline_event_handler_strings(page, base_url):
+    """Negative: string-valued on* attributes must be ignored (no inline JS)."""
+    page.goto(base_url)
+    page.wait_for_selector(EDITOR_SELECT)
+    result = page.evaluate("""() => {
+      const el = window.el;
+      // Attempt an inline handler via the 'html'-style onload string.
+      const node = el('img', { src: 'x', onload: 'window.__xss=1' });
+      return {
+        hasHandler: '__xss' in window,
+        outer: node.outerHTML,
+      };
+    }""")
+    assert result['hasHandler'] is False
+    assert 'onload' not in result['outer']
+
+
+def test_el_text_children_are_not_parsed(page, base_url):
+    """Positive: string children render as text nodes, not parsed HTML."""
+    page.goto(base_url)
+    page.wait_for_selector(EDITOR_SELECT)
+    for payload in XSS_PAYLOADS:
+        result = page.evaluate("""(p) => {
+          const el = window.el;
+          const node = el('div', {}, p);
+          return {
+            text: node.textContent,
+            hasImg: !!node.querySelector('img'),
+            hasScript: !!node.querySelector('script'),
+          };
+        }""", payload)
+        assert result['text'] == payload
+        assert result['hasImg'] is False
+        assert result['hasScript'] is False
+
+
+def test_toast_escapes_all_xss_payloads(page, base_url):
+    """Positive + negative: toast shows raw text, never parsed elements."""
+    page.goto(base_url)
+    page.wait_for_selector(EDITOR_SELECT)
+    for payload in XSS_PAYLOADS:
+        result = page.evaluate("""(p) => {
+          const t = document.getElementById('toast');
+          showToast(p, true);
+          return {
+            text: t.textContent,
+            hasImg: !!t.querySelector('img'),
+            hasScript: !!t.querySelector('script'),
+            hasSvg: !!t.querySelector('svg'),
+            hasIframe: !!t.querySelector('iframe'),
+          };
+        }""", payload)
+        assert result['text'] == payload
+        assert result['hasImg'] is False
+        assert result['hasScript'] is False
+        assert result['hasSvg'] is False
+        assert result['hasIframe'] is False
+
+
+def test_download_filename_is_sanitized(page, base_url):
+    """Negative: a malicious name must not produce a dangerous filename."""
+    page.goto(base_url)
+    page.wait_for_selector(EDITOR_SELECT)
+    for payload in XSS_PAYLOADS + ["../../etc/passwd", "a/b\\c:d*e?f"]:
+        result = page.evaluate("""(p) => {
+          return sanitizeFilename(p);
+        }""", payload)
+        # No path traversal, no slashes, no control chars, always .pdf.
+        assert "/" not in result
+        assert "\\" not in result
+        assert ".." not in result
+        assert result.endswith(".pdf")
+
+
+def test_form_injection_does_not_execute_on_preview(page, base_url):
+    """End-to-end negative: typing XSS into fields never injects into the DOM."""
+    page.goto(base_url)
+    page.evaluate(CLEAR_STORAGE_SCRIPT)
+    page.wait_for_selector(EDITOR_SELECT)
+    payload = "<img src=x onerror=window.__pwned=1>"
+    page.locator(NAME_INPUT).fill(payload)
+    page.locator(SUMMARY_TEXTAREA).first.fill(payload)
+    page.wait_for_timeout(1200)
+    _wait_preview(page)
+    pwned = page.evaluate("() => window.__pwned === 1")
+    assert pwned is False
+    # The name input must still hold the literal text.
+    assert page.locator(NAME_INPUT).input_value() == payload
+    # No stray <img> injected anywhere in the editor.
+    assert page.locator(f"{EDITOR_SELECT} img").count() == 0
+
+
 def test_long_text_persists_after_refresh(page, base_url):
     page.goto(base_url)
     page.evaluate(CLEAR_STORAGE_SCRIPT)
