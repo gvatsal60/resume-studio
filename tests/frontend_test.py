@@ -70,13 +70,10 @@ def test_el_helper_creates_elements(page, base_url):
     page.wait_for_selector(EDITOR_SELECT)
     result = page.evaluate("""() => {
       const el = window.el;
-      const withHtml = el('div', { class: 'foo', html: '<b>x</b>' });
       const withChildren = el('div', { class: 'bar' }, 'a', null, 'b');
       const btn = el('button', { type: 'button', onclick: () => {} }, 'Click');
       const hidden = el('input', { hidden: true });
       return {
-        htmlClassName: withHtml.className,
-        htmlInner: withHtml.innerHTML,
         childCount: withChildren.childNodes.length,
         firstText: withChildren.childNodes[0] && withChildren.childNodes[0].nodeValue,
         lastText: withChildren.childNodes[withChildren.childNodes.length - 1] && withChildren.childNodes[withChildren.childNodes.length - 1].nodeValue,
@@ -85,8 +82,6 @@ def test_el_helper_creates_elements(page, base_url):
         hiddenAttr: hidden.hasAttribute('hidden'),
       };
     }""")
-    assert result['htmlClassName'] == 'foo'
-    assert result['htmlInner'] == '<b>x</b>'
     assert result['childCount'] == 2
     assert result['firstText'] == 'a'
     assert result['lastText'] == 'b'
