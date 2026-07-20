@@ -100,10 +100,10 @@ Python 3.13 • RenderCV • PDF Preview • Ty • Python Extension • YAML Su
 
 ## 📚 Configuration
 
-**resume.yaml** - Personal info, experience, education, skills, projects
-**design.yaml** - Theme, colors, typography, margins
-**locale.yaml** - Language, date format, translations
-**settings.yaml** - App settings
+- **resume.yaml** - Personal info, experience, education, skills, projects
+- **design.yaml** - Theme, colors, typography, margins
+- **locale.yaml** - Language, date format, translations
+- **settings.yaml** - App settings
 
 👉 [Full RenderCV docs](https://sinaatalay.github.io/rendercv/)
 

@@ -10,9 +10,10 @@ function el(tag, attrs = {}, ...children) {
   const node = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
     if (k === "class") node.className = v;
-    else if (k === "html") node.innerHTML = v;
-    else if (k.startsWith("on") && typeof v === "function") {
-      node.addEventListener(k.slice(2), v);
+    else if (k.startsWith("on")) {
+      // Only function-valued event handlers are allowed; string inline
+      // handlers (e.g. onload="...") are rejected to prevent script injection.
+      if (typeof v === "function") node.addEventListener(k.slice(2), v);
     } else if (v !== null && v !== undefined && v !== false) {
       node.setAttribute(k, v);
     }
@@ -253,9 +254,18 @@ async function downloadPdf() {
   }
 }
 
+function sanitizeFilename(name) {
+  const cleaned = String(name || "")
+    .replace(/[^\w.\- ]+/g, "")
+    .replace(/\s+/g, "_")
+    .replace(/^\.+/, "")
+    .slice(0, 80)
+    .trim();
+  return `${cleaned || "Resume"}.pdf`;
+}
+
 function filenameFromState() {
-  const n = (state.cv.name || "Resume").trim().replace(/\s+/g, "_");
-  return `${n || "Resume"}.pdf`;
+  return sanitizeFilename(state.cv.name);
 }
 
 function parseErrors(err) {
@@ -270,7 +280,7 @@ let toastTimer = null;
 function showToast(msg, isError = false) {
   const t = $("#toast");
   const lines = String(msg).split("\n").filter(Boolean);
-  t.innerHTML = "";
+  t.replaceChildren();
   if (lines.length > 1) {
     t.appendChild(el("div", {}, "Please fix the following:"));
     const ul = el("ul");
@@ -288,7 +298,7 @@ function showToast(msg, isError = false) {
 
 function renderAll() {
   const editor = $(EDITOR_SELECT);
-  editor.innerHTML = "";
+  editor.replaceChildren();
   editor.appendChild(renderBasics());
   editor.appendChild(renderSocial());
   state.cv.sections.forEach((section, idx) => {

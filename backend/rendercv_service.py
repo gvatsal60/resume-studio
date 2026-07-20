@@ -13,6 +13,8 @@ from rendercv.exception import RenderCVUserValidationError
 from rendercv.renderer.pdf_png import generate_pdf
 from rendercv.renderer.typst import generate_typst
 
+from ruamel.yaml import compat, YAML
+
 
 class RenderError(Exception):
     """Raised when the resume data cannot be rendered.
@@ -75,7 +77,8 @@ def render_cv(data: dict) -> bytes:
         settings = data.get('settings') or {}
 
         # Compose a single YAML document rooting each block under its key.
-        merged = {'cv': cv, 'design': design, 'locale': locale, 'settings': settings}
+        merged = {'cv': cv, 'design': design,
+                  'locale': locale, 'settings': settings}
 
         # Direct all generated artifacts into the temp work directory.
         settings.setdefault('render_command', {})
@@ -116,10 +119,8 @@ def render_cv(data: dict) -> bytes:
 
 
 def _to_yaml(data: dict) -> str:
-    import ruamel.yaml
-
-    yaml = ruamel.yaml.YAML()
+    yaml = YAML()
     yaml.default_flow_style = False
-    stream = ruamel.yaml.compat.StringIO()
+    stream = compat.StringIO()
     yaml.dump(data, stream)
     return stream.getvalue()
