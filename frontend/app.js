@@ -8,18 +8,19 @@ const $ = (sel) => document.querySelector(sel);
 
 function el(tag, attrs = {}, ...children) {
   const node = document.createElement(tag);
-  Object.entries(attrs).forEach(([k, v]) => {
+  for (const [k, v] of Object.entries(attrs)) {
     if (k === "class") node.className = v;
+    else if (k === "html") node.innerHTML = v;
     else if (k.startsWith("on") && typeof v === "function") {
       node.addEventListener(k.slice(2), v);
     } else if (v !== null && v !== undefined && v !== false) {
       node.setAttribute(k, v);
     }
-  });
-  children.flat().forEach((c) => {
-    if (c == null) return;
+  }
+  for (const c of children.flat()) {
+    if (c == null) continue;
     node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
-  });
+  }
   return node;
 }
 
@@ -161,9 +162,9 @@ async function renderPdf(url, payload) {
 function buildPayload() {
   const cv = state.cv;
   const sections = {};
-  cv.sections.forEach((s) => {
+  for (const s of cv.sections) {
     sections[toTitleCase(s.title)] = entriesToData(s.type, s.entries);
-  });
+  }
   const out = {
     cv: {
       name: cv.name || null,
@@ -200,17 +201,19 @@ function buildPayload() {
 function entriesToData(type, entries) {
   const clean = (obj) => {
     const o = {};
-    Object.entries(obj).forEach(([k, v]) => {
-      if (v === "" || v === null || v === undefined) return;
-      if (Array.isArray(v) && v.length === 0) return;
+    for (const [k, v] of Object.entries(obj)) {
+      if (v === "" || v === null || v === undefined) continue;
+      if (Array.isArray(v) && v.length === 0) continue;
       o[k] = v;
-    });
+    }
     return o;
   };
-  if (type === "summary") {
-    return entries.map((e) => e.text).filter((t) => t.trim() !== "");
+  switch (type) {
+    case "summary":
+      return entries.map((e) => e.text).filter((t) => t.trim() !== "");
+    default:
+      return entries.map((e) => clean(e)).filter((o) => Object.keys(o).length > 0);
   }
-  return entries.map((e) => clean(e)).filter((o) => Object.keys(o).length > 0);
 }
 
 /* --------------------------------------------------------- preview / download */
@@ -521,9 +524,9 @@ function renderHighlights(entry, type) {
 function renderAddSection() {
   const wrap = el("div", { class: "section-add" });
   const select = el("select");
-  Object.entries(SECTION_TYPES).forEach(([key, meta]) => {
+  for (const [key, meta] of Object.entries(SECTION_TYPES)) {
     select.appendChild(el("option", { value: key }, meta.label));
-  });
+  }
   wrap.appendChild(select);
   wrap.appendChild(
     el("button", { class: "btn primary", type: "button", onclick: () => {
@@ -573,10 +576,10 @@ function convertEntries(type, entries) {
   }
   return entries.map((e) => {
     const o = {};
-    Object.entries(e).forEach(([k, v]) => {
+    for (const [k, v] of Object.entries(e)) {
       if (k === "highlights") o.highlights = Array.isArray(v) ? [...v] : [];
       else o[k] = v;
-    });
+    }
     if (!o.highlights) o.highlights = [];
     return o;
   });
@@ -718,7 +721,7 @@ function toHex(color) {
   if (color.startsWith("#")) return color;
   const m = color.match(/(\d+),\s*(\d+),\s*(\d+)/);
   if (m) {
-    const h = (n) => Number.parseInt(n, 10).toString(16).padStart(2, "0");
+    const h = (n) => parseInt(n, 10).toString(16).padStart(2, "0");
     return "#" + h(m[1]) + h(m[2]) + h(m[3]);
   }
   return "#4f46e5";
