@@ -1,4 +1,4 @@
-var AUTOPREVIEW_CHECKBOX = "#autopreview";
-var THEME_SELECT = "#theme-select";
-var EDITOR_SELECT = "#editor";
-var BOLD_BUTTON = ".format-toolbar--global [data-action='bold']";
+const AUTOPREVIEW_CHECKBOX = "#autopreview";
+const THEME_SELECT = "#theme-select";
+const EDITOR_SELECT = "#editor";
+const BOLD_BUTTON = ".format-toolbar--global [data-action='bold']";

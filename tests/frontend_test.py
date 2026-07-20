@@ -17,8 +17,10 @@ from tests.constants_test import (
     SECTION_CARDS,
     SECTION_TITLES_SCRIPT,
     SUMMARY_TEXTAREA,
+    TAG_NAME_SCRIPT,
     THEME_SELECT,
     TITLE_INPUT,
+    TOAST_SELECTOR,
 )
 
 
@@ -63,6 +65,31 @@ def test_add_custom_section_and_rename(page, base_url):
     assert last.locator("input[placeholder='Item title']").count() == 1
 
 
+def test_el_helper_creates_elements(page, base_url):
+    page.goto(base_url)
+    page.wait_for_selector(EDITOR_SELECT)
+    result = page.evaluate("""() => {
+      const el = window.el;
+      const withChildren = el('div', { class: 'bar' }, 'a', null, 'b');
+      const btn = el('button', { type: 'button', onclick: () => {} }, 'Click');
+      const hidden = el('input', { hidden: true });
+      return {
+        childCount: withChildren.childNodes.length,
+        firstText: withChildren.childNodes[0] && withChildren.childNodes[0].nodeValue,
+        lastText: withChildren.childNodes[withChildren.childNodes.length - 1] && withChildren.childNodes[withChildren.childNodes.length - 1].nodeValue,
+        btnTag: btn.tagName,
+        btnText: btn.textContent,
+        hiddenAttr: hidden.hasAttribute('hidden'),
+      };
+    }""")
+    assert result['childCount'] == 2
+    assert result['firstText'] == 'a'
+    assert result['lastText'] == 'b'
+    assert result['btnTag'] == 'BUTTON'
+    assert result['btnText'] == 'Click'
+    assert result['hiddenAttr'] is True
+
+
 def test_reorder_sections(page, base_url):
     page.goto(base_url)
     page.wait_for_selector(SECTION_CARDS)
@@ -80,7 +107,7 @@ def test_skills_details_is_wrapping_textarea(page, base_url):
     page.goto(base_url)
     page.wait_for_selector(SECTION_CARDS)
     area = page.locator("textarea[placeholder^='Python']").first
-    assert area.evaluate('el => el.tagName') == 'TEXTAREA'
+    assert area.evaluate(TAG_NAME_SCRIPT) == 'TEXTAREA'
     area.fill('x' * 240)
     page.wait_for_timeout(300)
     # wrapped: content taller than the visible box
@@ -94,7 +121,7 @@ def test_experience_highlights_is_wrapping_textarea(page, base_url):
     exp = page.locator(SECTION_CARDS).nth(2)
     exp.locator("button:has-text('Add highlight')").first.click()
     ta = exp.locator("textarea[placeholder='Achievement or responsibility']").first
-    assert ta.evaluate('el => el.tagName') == 'TEXTAREA'
+    assert ta.evaluate(TAG_NAME_SCRIPT) == 'TEXTAREA'
 
 
 def test_validation_error_shown(page, base_url):
@@ -103,7 +130,7 @@ def test_validation_error_shown(page, base_url):
     page.locator(EMAIL_INPUT).fill('not-an-email')
     page.locator('#preview-btn').click()
     page.wait_for_selector('#toast.error', timeout=8000)
-    assert 'email' in page.locator('#toast').inner_text().lower()
+    assert 'email' in page.locator(TOAST_SELECTOR).inner_text().lower()
 
 
 def test_download_pdf(page, base_url, tmp_path: pathlib.Path):
@@ -359,6 +386,24 @@ def test_corrupted_design_state_falls_back_to_defaults(page, base_url):
     _wait_preview(page)
     assert page.locator(THEME_SELECT).input_value() == 'engineeringresumes'
     assert page.locator(NAME_INPUT).input_value() == DEFAULT_NAME
+
+
+def test_toast_is_output_element_not_div_with_role(page, base_url):
+    page.goto(base_url)
+    page.wait_for_selector(TOAST_SELECTOR)
+    tag = page.locator(TOAST_SELECTOR).evaluate(TAG_NAME_SCRIPT)
+    assert tag.lower() == 'output'
+    assert page.locator('#toast[role="status"]').count() == 0
+
+
+def test_uid_uses_crypto_getrandomvalues(page, base_url):
+    page.goto(base_url)
+    page.wait_for_selector(EDITOR_SELECT)
+    uses_crypto = page.evaluate("""() => {
+      const src = typeof uid === 'function' ? uid.toString() : '';
+      return src.includes('crypto.getRandomValues');
+    }""")
+    assert uses_crypto is True
 
 
 def test_long_text_persists_after_refresh(page, base_url):

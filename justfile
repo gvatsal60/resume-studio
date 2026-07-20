@@ -42,6 +42,10 @@ deploy:
 test:
     @uv run pytest tests
 
+coverage:
+    @uv run pytest tests --cov=backend --cov-report=term-missing --cov-report=html
+    @echo "HTML report: file://$(pwd)/htmlcov/index.html"
+
 clean:
     @uv clean
-    @rm -rf __pycache__ .pytest_cache .mypy_cache .venv rendercv_output
+    @rm -rf __pycache__ .pytest_cache .mypy_cache .venv rendercv_output htmlcov
