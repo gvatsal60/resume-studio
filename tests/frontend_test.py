@@ -17,6 +17,7 @@ from tests.constants_test import (
     SECTION_CARDS,
     SECTION_TITLES_SCRIPT,
     SUMMARY_TEXTAREA,
+    TAG_NAME_SCRIPT,
     THEME_SELECT,
     TITLE_INPUT,
 )
@@ -80,7 +81,7 @@ def test_skills_details_is_wrapping_textarea(page, base_url):
     page.goto(base_url)
     page.wait_for_selector(SECTION_CARDS)
     area = page.locator("textarea[placeholder^='Python']").first
-    assert area.evaluate('el => el.tagName') == 'TEXTAREA'
+    assert area.evaluate(TAG_NAME_SCRIPT) == 'TEXTAREA'
     area.fill('x' * 240)
     page.wait_for_timeout(300)
     # wrapped: content taller than the visible box
@@ -94,7 +95,7 @@ def test_experience_highlights_is_wrapping_textarea(page, base_url):
     exp = page.locator(SECTION_CARDS).nth(2)
     exp.locator("button:has-text('Add highlight')").first.click()
     ta = exp.locator("textarea[placeholder='Achievement or responsibility']").first
-    assert ta.evaluate('el => el.tagName') == 'TEXTAREA'
+    assert ta.evaluate(TAG_NAME_SCRIPT) == 'TEXTAREA'
 
 
 def test_validation_error_shown(page, base_url):
@@ -364,7 +365,7 @@ def test_corrupted_design_state_falls_back_to_defaults(page, base_url):
 def test_toast_is_output_element_not_div_with_role(page, base_url):
     page.goto(base_url)
     page.wait_for_selector('#toast')
-    tag = page.locator('#toast').evaluate('el => el.tagName')
+    tag = page.locator('#toast').evaluate(TAG_NAME_SCRIPT)
     assert tag.lower() == 'output'
     assert page.locator('#toast[role="status"]').count() == 0
 

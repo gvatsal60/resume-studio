@@ -12,3 +12,4 @@ SECTION_ADD_SELECT = '.section-add select'
 SECTION_ADD_BUTTON = '.section-add .btn.primary'
 BOLD_BUTTON = ".format-toolbar--global [data-action='bold']"
 DEFAULT_NAME = '**Vatsal Gupta**'
+TAG_NAME_SCRIPT = 'el => el.tagName'

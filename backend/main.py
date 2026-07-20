@@ -76,6 +76,7 @@ async def _render_from_request(request: fastapi.Request) -> tuple[dict, bytes] |
     data, err = await _parse_json_body(request)
     if err:
         return err
+    assert data is not None
     pdf_bytes, err = _render_pdf(data)
     if err:
         return err
@@ -106,7 +107,7 @@ async def api_preview(request: fastapi.Request) -> fastapi.responses.Response:
     result = await _render_from_request(request)
     if isinstance(result, JSONResponse):
         return result
-    data, pdf_bytes = result
+    _, pdf_bytes = result
     return fastapi.responses.Response(
         content=pdf_bytes,
         media_type='application/pdf',
