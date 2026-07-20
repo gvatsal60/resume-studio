@@ -454,12 +454,12 @@ def test_toast_renders_error_text_without_html_injection(page, base_url):
 # ---------------------------------------------------------------------------
 
 XSS_PAYLOADS = [
-    "<script>alert(1)</script>",
-    "<img src=x onerror=alert(1)>",
-    "<svg/onload=alert(1)>",
+    '<script>alert(1)</script>',
+    '<img src=x onerror=alert(1)>',
+    '<svg/onload=alert(1)>',
     "\"><img src=x onerror=alert(1)>",
-    "javascript:alert(1)",
-    "<iframe src=javascript:alert(1)>",
+    'javascript:alert(1)',
+    '<iframe src=javascript:alert(1)>',
 ]
 
 
@@ -543,15 +543,15 @@ def test_download_filename_is_sanitized(page, base_url):
     """Negative: a malicious name must not produce a dangerous filename."""
     page.goto(base_url)
     page.wait_for_selector(EDITOR_SELECT)
-    for payload in XSS_PAYLOADS + ["../../etc/passwd", "a/b\\c:d*e?f"]:
+    for payload in XSS_PAYLOADS + ['../../etc/passwd', 'a/b\\c:d*e?f']:
         result = page.evaluate("""(p) => {
           return sanitizeFilename(p);
         }""", payload)
         # No path traversal, no slashes, no control chars, always .pdf.
-        assert "/" not in result
-        assert "\\" not in result
-        assert ".." not in result
-        assert result.endswith(".pdf")
+        assert '/' not in result
+        assert '\\' not in result
+        assert '..' not in result
+        assert result.endswith('.pdf')
 
 
 def test_form_injection_does_not_execute_on_preview(page, base_url):
@@ -559,12 +559,12 @@ def test_form_injection_does_not_execute_on_preview(page, base_url):
     page.goto(base_url)
     page.evaluate(CLEAR_STORAGE_SCRIPT)
     page.wait_for_selector(EDITOR_SELECT)
-    payload = "<img src=x onerror=window.__pwned=1>"
+    payload = '<img src=x onerror=window.__pwned=1>'
     page.locator(NAME_INPUT).fill(payload)
     page.locator(SUMMARY_TEXTAREA).first.fill(payload)
     page.wait_for_timeout(1200)
     _wait_preview(page)
-    pwned = page.evaluate("() => window.__pwned === 1")
+    pwned = page.evaluate('() => window.__pwned === 1')
     assert pwned is False
     # The name input must still hold the literal text.
     assert page.locator(NAME_INPUT).input_value() == payload
