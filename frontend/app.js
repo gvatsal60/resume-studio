@@ -68,6 +68,32 @@ function addSmallBtn(text, onClick) {
   return el("button", { class: "add-btn", type: "button", onclick: onClick }, text);
 }
 
+function designSelect(options, value, onChange) {
+  const sel = el("select");
+  for (const [val, label] of Object.entries(options)) {
+    sel.appendChild(el("option", { value: val }, label));
+  }
+  sel.value = value;
+  sel.addEventListener("change", (e) => { onChange(e.target.value); schedulePreview(); saveState(); });
+  return sel;
+}
+
+function designInput(value, placeholder, onChange) {
+  const inp = el("input", { type: "text", value: value || "", placeholder: placeholder || "" });
+  inp.addEventListener("input", (e) => { onChange(e.target.value); schedulePreview(); saveState(); });
+  return inp;
+}
+
+function designCheckbox(label, checked, onChange) {
+  const wrap = el("label", { class: "design-toggle" });
+  const cb = el("input", { type: "checkbox" });
+  if (checked) cb.checked = true;
+  cb.addEventListener("change", (e) => { onChange(e.target.checked); schedulePreview(); saveState(); });
+  wrap.appendChild(cb);
+  wrap.appendChild(el("span", {}, label));
+  return wrap;
+}
+
 /* ----------------------------------------------------------- section types */
 
 const SECTION_TYPES = {
@@ -109,7 +135,7 @@ const state = {
     website: "", photo: "", social_networks: [],
     sections: [],
   },
-  design: { theme: "engineeringresumes", pageSize: "a4", showFooter: false, accent: "#4f46e5" },
+  design: { theme: "engineeringresumes", pageSize: "a4", showFooter: false, showTopNote: false, accent: "#4f46e5", alignment: "justified", lineSpacing: "0.5em", fontFamily: "XCharter", margins: { top: "0.7in", bottom: "0.7in", left: "0.7in", right: "0.7in" }, underlineLinks: true, showExternalLinkIcon: false },
   locale: {},
   settings: {},
   ui: { autopreview: true },
@@ -183,14 +209,26 @@ function buildPayload() {
     design: {
       theme: state.design.theme,
       page: {
-        size: "a4",
+        size: state.design.pageSize,
+        top_margin: state.design.margins.top,
+        bottom_margin: state.design.margins.bottom,
+        left_margin: state.design.margins.left,
+        right_margin: state.design.margins.right,
         show_footer: state.design.showFooter,
-        show_top_note: false,
+        show_top_note: state.design.showTopNote,
       },
       colors: {
         section_titles: state.design.accent,
         links: state.design.accent,
         connections: state.design.accent,
+      },
+      typography: {
+        alignment: state.design.alignment,
+        line_spacing: state.design.lineSpacing,
+      },
+      links: {
+        underline: state.design.underlineLinks,
+        show_external_link_icon: state.design.showExternalLinkIcon,
       },
       header: state.design.header || undefined,
     },
@@ -297,9 +335,56 @@ function showToast(msg, isError = false) {
 
 /* ----------------------------------------------------------- form rendering */
 
+function renderDesignPanel() {
+  const card = el("div", { class: "card" });
+  card.appendChild(
+    el("div", { class: "card-head" }, el("div", { class: "card-title" },
+      el("span", { class: "dot" }), "Design"))
+  );
+
+  const g1 = el("div", { class: "grid-2" });
+  g1.appendChild(fieldBlock("Page size", designSelect(
+    { a4: "A4", "us-letter": "US Letter" },
+    state.design.pageSize,
+    (v) => state.design.pageSize = v
+  )));
+  g1.appendChild(fieldBlock("Alignment", designSelect(
+    { justified: "Justified", left: "Left", right: "Right" },
+    state.design.alignment,
+    (v) => state.design.alignment = v
+  )));
+  card.appendChild(g1);
+
+  const g2 = el("div", { class: "grid-2", style: "margin-top:12px" });
+  g2.appendChild(fieldBlock("Line spacing", designInput(state.design.lineSpacing, "0.5em", (v) => state.design.lineSpacing = v)));
+  g2.appendChild(fieldBlock("Font family", designSelect(
+    { "XCharter": "XCharter", "Latin Modern Roman": "Latin Modern", "New Computer Modern": "New Computer Modern" },
+    state.design.fontFamily || "XCharter",
+    (v) => state.design.fontFamily = v
+  )));
+  card.appendChild(g2);
+
+  const g3 = el("div", { class: "grid-4", style: "margin-top:12px" });
+  g3.appendChild(fieldBlock("Margin top", designInput(state.design.margins.top, "0.7in", (v) => state.design.margins.top = v)));
+  g3.appendChild(fieldBlock("Margin bottom", designInput(state.design.margins.bottom, "0.7in", (v) => state.design.margins.bottom = v)));
+  g3.appendChild(fieldBlock("Margin left", designInput(state.design.margins.left, "0.7in", (v) => state.design.margins.left = v)));
+  g3.appendChild(fieldBlock("Margin right", designInput(state.design.margins.right, "0.7in", (v) => state.design.margins.right = v)));
+  card.appendChild(g3);
+
+  const toggles = el("div", { class: "design-toggles" });
+  toggles.appendChild(designCheckbox("Show footer", state.design.showFooter, (v) => state.design.showFooter = v));
+  toggles.appendChild(designCheckbox("Show top note", state.design.showTopNote, (v) => state.design.showTopNote = v));
+  toggles.appendChild(designCheckbox("Underline links", state.design.underlineLinks, (v) => state.design.underlineLinks = v));
+  toggles.appendChild(designCheckbox("Link icons", state.design.showExternalLinkIcon, (v) => state.design.showExternalLinkIcon = v));
+  card.appendChild(toggles);
+
+  return card;
+}
+
 function renderAll() {
   const editor = $(EDITOR_SELECT);
   editor.replaceChildren();
+  editor.appendChild(renderDesignPanel());
   editor.appendChild(renderBasics());
   editor.appendChild(renderSocial());
   state.cv.sections.forEach((section, idx) => {
@@ -612,10 +697,30 @@ function applyDefaults(data) {
   const design = data.design || {};
   state.design.theme = design.theme || "engineeringresumes";
   state.design.pageSize = "a4";
-  state.design.showFooter = !!(design.page && design.page.show_footer);
+  state.design.showFooter = false;
+  state.design.showTopNote = false;
+  state.design.alignment = "justified";
+  state.design.lineSpacing = "0.5em";
+  state.design.fontFamily = "XCharter";
+  state.design.margins = { top: "0.7in", bottom: "0.7in", left: "0.7in", right: "0.7in" };
+  state.design.underlineLinks = true;
+  state.design.showExternalLinkIcon = false;
   state.design.header = design.header || null;
-  const accent =
-    (design.colors && (design.colors.section_titles || design.colors.name)) || "#4f46e5";
+  const page = design.page || {};
+  if (page.size) state.design.pageSize = page.size;
+  if (page.show_footer !== undefined) state.design.showFooter = page.show_footer;
+  if (page.show_top_note !== undefined) state.design.showTopNote = page.show_top_note;
+  if (page.top_margin) state.design.margins.top = page.top_margin;
+  if (page.bottom_margin) state.design.margins.bottom = page.bottom_margin;
+  if (page.left_margin) state.design.margins.left = page.left_margin;
+  if (page.right_margin) state.design.margins.right = page.right_margin;
+  const typography = design.typography || {};
+  if (typography.alignment) state.design.alignment = typography.alignment;
+  if (typography.line_spacing) state.design.lineSpacing = typography.line_spacing;
+  const links = design.links || {};
+  if (links.underline !== undefined) state.design.underlineLinks = links.underline;
+  state.design.showExternalLinkIcon = !!links.show_external_link_icon;
+  const accent = (design.colors && (design.colors.section_titles || design.colors.name)) || "#4f46e5";
   state.design.accent = toHex(accent) === "#000000" ? "#4f46e5" : toHex(accent);
 
   state.locale = data.locale || {};
@@ -651,7 +756,10 @@ function mergeState(saved) {
     if (saved.cv.social_networks) state.cv.social_networks = saved.cv.social_networks;
     if (saved.cv.sections) state.cv.sections = saved.cv.sections;
   }
-  if (saved.design) state.design = { ...state.design, ...saved.design };
+  if (saved.design) {
+    if (saved.design.margins) state.design.margins = { ...state.design.margins, ...saved.design.margins };
+    state.design = { ...state.design, ...saved.design };
+  }
   if (saved.locale) state.locale = { ...state.locale, ...saved.locale };
   if (saved.settings) state.settings = { ...state.settings, ...saved.settings };
   if (saved.ui) state.ui = { ...state.ui, ...saved.ui };
