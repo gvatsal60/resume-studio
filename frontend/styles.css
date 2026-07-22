@@ -448,6 +448,11 @@ textarea:focus {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
 .field-block {
   margin-bottom: 12px;
 }
@@ -546,6 +551,28 @@ textarea {
 }
 .add-btn:hover {
   background: #e3e6ff;
+}
+
+.design-toggles {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 4px;
+}
+.design-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+.design-toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
 }
 
 .section-add {
