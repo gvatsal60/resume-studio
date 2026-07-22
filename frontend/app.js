@@ -192,6 +192,7 @@ function buildPayload() {
         links: state.design.accent,
         connections: state.design.accent,
       },
+      header: state.design.header || undefined,
     },
     locale: state.locale,
     settings: state.settings,
@@ -612,6 +613,7 @@ function applyDefaults(data) {
   state.design.theme = design.theme || "engineeringresumes";
   state.design.pageSize = "a4";
   state.design.showFooter = !!(design.page && design.page.show_footer);
+  state.design.header = design.header || null;
   const accent =
     (design.colors && (design.colors.section_titles || design.colors.name)) || "#4f46e5";
   state.design.accent = toHex(accent) === "#000000" ? "#4f46e5" : toHex(accent);
