@@ -19,7 +19,7 @@ watch:
         --design {{design}} \
         --locale-catalog {{locale}} \
         --settings {{settings}} \
-        --output-folder {{target}} \
+        --output-folder "{{target}}" \
         --dont-generate-html \
         --dont-generate-markdown \
         --dont-generate-png \
@@ -30,7 +30,7 @@ build:
         --design "{{design}}" \
         --locale-catalog "{{locale}}" \
         --settings "{{settings}}" \
-        --output-folder {{target}} \
+        --output-folder "{{target}}" \
         --dont-generate-html \
         --dont-generate-markdown \
         --dont-generate-png \
