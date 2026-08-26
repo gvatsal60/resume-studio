@@ -16,9 +16,9 @@ sync:
 
 watch:
     @uv run rendercv render --watch \
-        --design {{design}} \
-        --locale-catalog {{locale}} \
-        --settings {{settings}} \
+        --design "{{design}}" \
+        --locale-catalog "{{locale}}" \
+        --settings "{{settings}}" \
         --output-folder "{{target}}" \
         --dont-generate-html \
         --dont-generate-markdown \
@@ -51,4 +51,4 @@ coverage:
 
 clean:
     @uv clean
-    @rm -rf target/ __pycache__ .pytest_cache .mypy_cache .venv rendercv_output htmlcov
+    @rm -rf __pycache__ .pytest_cache .mypy_cache .venv rendercv_output target htmlcov
