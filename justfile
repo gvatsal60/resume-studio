@@ -1,13 +1,14 @@
-src := "src"
-build_dir := "build"
+top_dir := `git rev-parse --show-toplevel`
+src     := top_dir / "src"
+target  := top_dir / "target"
 
 resume   := src / "resume.yaml"
 design   := src / "design.yaml"
 locale   := src / "locale.yaml"
 settings := src / "settings.yaml"
 
-# Default recipe (runs when you just type 'just')
-all: clean sync build
+# Default recipe
+default: clean sync build
 
 # Sync dependencies using uv
 sync:
@@ -15,23 +16,25 @@ sync:
 
 watch:
     @uv run rendercv render --watch \
-      --design {{design}} \
-      --locale-catalog {{locale}} \
-      --settings {{settings}} \
-      --dont-generate-markdown \
-      --dont-generate-html \
-      --dont-generate-png \
-      {{resume}}
+        --design {{design}} \
+        --locale-catalog {{locale}} \
+        --settings {{settings}} \
+        --output-folder {{target}} \
+        --dont-generate-html \
+        --dont-generate-markdown \
+        --dont-generate-png \
+        {{resume}}
 
 build:
     @uv run rendercv render \
-      --design {{design}} \
-      --locale-catalog {{locale}} \
-      --settings {{settings}} \
-      --dont-generate-markdown \
-      --dont-generate-html \
-      --dont-generate-png \
-      {{resume}}
+        --design "{{design}}" \
+        --locale-catalog "{{locale}}" \
+        --settings "{{settings}}" \
+        --output-folder {{target}} \
+        --dont-generate-html \
+        --dont-generate-markdown \
+        --dont-generate-png \
+        "{{resume}}"
 
 web:
     @uv run fastapi dev
@@ -48,4 +51,4 @@ coverage:
 
 clean:
     @uv clean
-    @rm -rf __pycache__ .pytest_cache .mypy_cache .venv rendercv_output htmlcov
+    @rm -rf target/ __pycache__ .pytest_cache .mypy_cache .venv rendercv_output htmlcov

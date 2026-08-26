@@ -119,3 +119,4 @@ bower_components/
 
 # RenderCV Output
 **/rendercv_output/
+**/target/
