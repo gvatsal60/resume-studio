@@ -1,0 +1,4 @@
+# Make locale.yaml and settings.yaml read-only for all users/groups
+# after checkout via a smudge filter (see tools/git-readonly-filter.sh).
+src/locale.yaml filter=readonly
+src/settings.yaml filter=readonly
