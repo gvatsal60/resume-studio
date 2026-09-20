@@ -19,7 +19,7 @@ design:
     footer: rgb(128, 128, 128)
     top_note: rgb(128, 128, 128)
   typography:
-    line_spacing: 0.6em
+    line_spacing: 0.5em
     alignment: justified
     date_and_location_column_alignment: right
     font_family:
