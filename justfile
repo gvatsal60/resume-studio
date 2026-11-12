@@ -12,7 +12,7 @@ default: clean sync build
 
 # Sync dependencies using uv
 sync:
-    @uv sync --no-cache
+    @uv sync --no-cache --quiet
 
 watch:
     @uv run rendercv render --watch \
@@ -50,5 +50,5 @@ coverage:
     @echo "HTML report: file://$(pwd)/htmlcov/index.html"
 
 clean:
-    @uv clean
+    @uv clean --quiet --force
     @rm -rf __pycache__ .pytest_cache .mypy_cache .venv rendercv_output target htmlcov
