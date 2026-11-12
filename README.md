@@ -28,7 +28,7 @@ code .
 ```bash
 git clone https://github.com/gvatsal60/rendercv-local.git
 cd rendercv-local
-uv sync
+uv sync --no-cache --quiet
 ```
 
 ## 🚀 Build Commands

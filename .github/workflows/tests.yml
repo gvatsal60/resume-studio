@@ -14,7 +14,7 @@ jobs:
         with:
           enable-cache: true
       - run: |
-          uv sync --no-cache
+          uv sync --no-cache --quiet
           uv run playwright install --with-deps chromium
           uv run pytest tests -v
       - if: failure()
