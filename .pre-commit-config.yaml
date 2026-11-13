@@ -100,6 +100,6 @@ repos:
       - id: markdownlint-cli2
         args: [--fix]
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v10.8.0
+    rev: v10.14.0
     hooks:
       - id: eslint
